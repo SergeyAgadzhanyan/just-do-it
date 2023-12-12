@@ -1,1 +1,1 @@
-# JustDoIt
+# just-do-it
