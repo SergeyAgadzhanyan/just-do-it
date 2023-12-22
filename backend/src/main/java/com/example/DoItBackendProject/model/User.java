@@ -1,13 +1,17 @@
 package com.example.DoItBackendProject.model;
 
+import com.example.DoItBackendProject.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import org.hibernate.type.NumericBooleanConverter;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 @NoArgsConstructor
@@ -22,7 +26,5 @@ public class User {
     private Long id;
     private String email;
     private String name;
-    @Column(name = "is_admin")
-    @Convert(converter = NumericBooleanConverter.class)
-    private Boolean isAdmin;
+    Set<Role> roles = new HashSet<>();
 }

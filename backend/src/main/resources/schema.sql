@@ -1,11 +1,12 @@
-DROP TABLE users;
+DROP TABLE if exists users;
 CREATE TABLE IF NOT EXISTS users
 (
-    id       BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name     varchar not null,
-    email    varchar not null,
-    is_admin int     not null,
-    UNIQUE (email)
+    ID    int           not null AUTO_INCREMENT,
+    name  varchar       not null,
+    email varchar       not null,
+    roles varchar array not null,
+    UNIQUE (email),
+    PRIMARY KEY (ID)
 );
 
 
