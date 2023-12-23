@@ -11,6 +11,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashSet;
@@ -20,7 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
@@ -34,16 +38,24 @@ public class UserService {
 
     public Set<UserDto> getUser(List<Long> ids, int from, int size) {
         Pageable pageableWithSort = PageRequest.of(from, size);
-        if (ids == null || ids.isEmpty()) return userRepository.findAll(pageableWithSort).getContent().stream()
-                .map(userMapper::mapFromUser).collect(Collectors.toCollection(LinkedHashSet::new));
-        return userRepository
-                .findAllByIdIn(ids, pageableWithSort)
-                .stream().map(userMapper::mapFromUser)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+        if (ids == null || ids.isEmpty())
+            return userRepository.findAll(pageableWithSort).getContent().stream().map(userMapper::mapFromUser).collect(Collectors.toCollection(LinkedHashSet::new));
+        return userRepository.findAllByIdIn(ids, pageableWithSort).stream().map(userMapper::mapFromUser).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     public void deleteUser(Long userId) {
         userRepository.findById(userId).orElseThrow(() -> new NotFoundException(Messages.RESOURCE_NOT_FOUND.getMessage()));
         userRepository.deleteById(userId);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
+        return userRepository
+                .findByEmail(userEmail)
+                .map(u -> new User(
+                        u.getName(),
+                        u.getPassword(),
+                        u.getRoles()))
+                .orElseThrow(() -> new UsernameNotFoundException("User don't exists"));
     }
 }

@@ -17,6 +17,9 @@ public class NewUserRequest {
     @Length(min = 2, max = 250)
     private String name;
     @NotBlank
+    @Length(min = 4, max = 10)
+    private String password;
+    @NotBlank
     @Email
     @Length(min = 6, max = 254)
     private String email;
