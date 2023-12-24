@@ -5,18 +5,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
 
 
     @Bean
@@ -30,14 +28,17 @@ public class SecurityConfiguration {
                                 "POST, PUT, GET, OPTIONS, DELETE"))
                         .addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-Credentials", "true")))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/perform_login", "/user").permitAll()
+                        .requestMatchers("/perform_login").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form
+                        .loginPage("http://localhost:3000/")
                         .loginProcessingUrl("/perform_login")
                         .usernameParameter("name")
                         .passwordParameter("password")
-                        .successHandler(new MySuccessLoginHandler()))
-                .exceptionHandling(e -> e.authenticationEntryPoint(new MyUnAuthHandler()));
+                        .defaultSuccessUrl("http://localhost:8080/admin/users")
+                        .successHandler(new MySuccessLoginHandler()));
+//                .exceptionHandling(e -> e.authenticationEntryPoint(new MyUnAuthHandler()));
+
         return http.build();
     }
 }
