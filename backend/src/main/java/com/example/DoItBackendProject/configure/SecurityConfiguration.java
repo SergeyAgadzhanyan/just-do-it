@@ -2,6 +2,7 @@ package com.example.DoItBackendProject.configure;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -29,7 +30,9 @@ public class SecurityConfiguration {
                         .addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-Credentials", "true")))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/perform_login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/admin/users").permitAll()
                         .anyRequest().authenticated())
+
                 .formLogin(form -> form
                         .loginPage("http://localhost:3000/")
                         .loginProcessingUrl("/perform_login")
@@ -37,7 +40,6 @@ public class SecurityConfiguration {
                         .passwordParameter("password")
                         .defaultSuccessUrl("http://localhost:8080/admin/users")
                         .successHandler(new MySuccessLoginHandler()));
-//                .exceptionHandling(e -> e.authenticationEntryPoint(new MyUnAuthHandler()));
 
         return http.build();
     }

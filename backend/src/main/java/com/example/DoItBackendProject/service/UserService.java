@@ -50,7 +50,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
-        UserDetails user = userRepository
+        return userRepository
                 .findByEmail(userEmail)
                 .map(u -> new User(
                         u.getName(),
@@ -58,6 +58,5 @@ public class UserService implements UserDetailsService {
                         u.getRoles()))
                 .orElseThrow(()
                         -> new UsernameNotFoundException("User don't exists"));
-        return user;
     }
 }
