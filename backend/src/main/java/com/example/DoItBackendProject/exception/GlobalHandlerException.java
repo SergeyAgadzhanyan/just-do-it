@@ -21,9 +21,9 @@ public class GlobalHandlerException {
 
     @ExceptionHandler({BadRequestException.class, MethodArgumentNotValidException.class, MissingServletRequestParameterException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public BadRequestException handleBadRequestException(RuntimeException ex) {
+    public RuntimeException handleBadRequestException(Exception ex) {
         log.warn("Получен статус 400 Bad Request {}", ex.getMessage(), ex);
-        return new BadRequestException(ex.getMessage());
+        return new RuntimeException(ex.getMessage());
     }
 
     @ExceptionHandler(ConflictException.class)
@@ -40,6 +40,7 @@ public class GlobalHandlerException {
         log.warn("Получен статус 500 Internal Server Error {}", ex.getMessage(), ex);
         return new Throwable("Internal_Server_Error");
     }
+
 
 
 }
